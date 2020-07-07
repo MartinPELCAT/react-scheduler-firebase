@@ -1,26 +1,52 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Suspense, lazy } from "react";
+import { initializeApp, apps, User } from "firebase/app";
+import "firebase/auth";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { CircularProgress, Backdrop } from "@material-ui/core";
+import ProtectedRoute from "./components/ProtectedRoute";
+import SessionContext from "./contexts/SessionContext";
+import ThemeContext from "./contexts/ThemeContext";
+import { firebaseConfig } from "./config/firebase-credentials";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const LoginPage = lazy(() => import("./page/LoginPage"));
+const SchedulePage = lazy(() => import("./page/SchedulePage"));
+
+interface AppState {
+  connectedUser: User | null;
 }
 
-export default App;
+if (!apps.length) {
+  initializeApp(firebaseConfig);
+}
+
+export default class App extends Component<{}, AppState> {
+  constructor(props: Readonly<{}>) {
+    super(props);
+    this.state = {
+      connectedUser: null,
+    };
+  }
+
+  render() {
+    return (
+      <SessionContext>
+        <ThemeContext>
+          <Suspense
+            fallback={
+              <Backdrop open={true}>
+                <CircularProgress color="inherit" />
+              </Backdrop>
+            }
+          >
+            <Router>
+              <Switch>
+                <Route exact path="/login" component={LoginPage} />
+                <ProtectedRoute path="/" component={SchedulePage} />
+              </Switch>
+            </Router>
+          </Suspense>
+        </ThemeContext>
+      </SessionContext>
+    );
+  }
+}
