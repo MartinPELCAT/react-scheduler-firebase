@@ -6,6 +6,10 @@ import {
   endOfMonth,
   isToday,
   isThisMonth,
+  setHours,
+  setMinutes,
+  addMinutes,
+  isAfter,
 } from "date-fns";
 
 /**
@@ -81,4 +85,66 @@ export const getFullMonthDays = (date: Date): Array<Date> => {
  */
 export const getCurrentFullMonthDays = (): Array<Date> => {
   return getFullMonthDays(new Date());
+};
+
+type HourType =
+  | 0
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 13
+  | 14
+  | 15
+  | 16
+  | 17
+  | 18
+  | 19
+  | 20
+  | 21
+  | 22
+  | 23;
+
+type MinuteType = 0 | 30;
+
+const formatNumber = (number: number): string => {
+  return `0${number}`.slice(-2);
+};
+
+const formatHour = (hour: number, minutes: number): string => {
+  return formatNumber(hour).concat(":").concat(formatNumber(minutes));
+};
+
+const formatDateHour = (date: Date): string => {
+  return formatHour(date.getHours(), date.getMinutes());
+};
+
+export const getDayHours = (datas: {
+  startHour: { hour: HourType; minutes: MinuteType };
+  endHour: { hour: HourType; minutes: MinuteType };
+}): string[] => {
+  let dateNow = new Date();
+  let hours = [];
+  let start = setMinutes(
+    setHours(dateNow, datas.startHour.hour),
+    datas.startHour.minutes
+  );
+  let end = setMinutes(
+    setHours(dateNow, datas.endHour.hour),
+    datas.endHour.minutes
+  );
+
+  for (let hour = start; isAfter(end, hour); hour = addMinutes(hour, 30)) {
+    hours.push(formatDateHour(hour));
+  }
+  hours.push(formatDateHour(end));
+  return hours;
 };

@@ -6,31 +6,48 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TableContainer,
-  Paper,
+  Typography,
 } from "@material-ui/core";
-import { getCurrentFullMonthDays } from "../services/DateService";
+import TablesHoursColumn from "./TablesHoursColumn";
+import TableDayRows from "./TableDayRows";
+import { getTodayDate } from "../services/DateService";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export default class ScheduleDayView extends Component<RouteComponentProps> {
   render() {
-    console.log(getCurrentFullMonthDays());
     return (
-      <TableContainer variant="outlined" component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell className="table-cell-hour" style={{ width: 85 }} />
-              <TableCell>test</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            <TableRow>
-              <TableCell className="table-cell-hour">test</TableCell>
-              <TableCell>test</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell
+              style={{
+                width: 85,
+                borderRight: "1px solid rgba(224, 224, 224, 1)",
+              }}
+            />
+            <TableCell>
+              <Typography style={{ color: "#e3165b" }}>
+                {format(getTodayDate(), "eeee dd MMMM", { locale: fr })}
+              </Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            <TableCell style={{ width: 100, padding: 0 }}>
+              <div>
+                <TablesHoursColumn />
+              </div>
+            </TableCell>
+            <TableCell style={{ padding: 0 }}>
+              <div>
+                <TableDayRows />
+              </div>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     );
   }
 }
