@@ -10,6 +10,8 @@ import {
   setMinutes,
   addMinutes,
   isAfter,
+  roundToNearestMinutes,
+  setSeconds,
 } from "date-fns";
 
 /**
@@ -128,23 +130,29 @@ const formatDateHour = (date: Date): string => {
 };
 
 export const getDayHours = (datas: {
+  date: Date;
   startHour: { hour: HourType; minutes: MinuteType };
   endHour: { hour: HourType; minutes: MinuteType };
-}): string[] => {
-  let dateNow = new Date();
-  let hours = [];
-  let start = setMinutes(
-    setHours(dateNow, datas.startHour.hour),
-    datas.startHour.minutes
+}): Array<{ hour: string; date: Date }> => {
+  let hours: Array<{ hour: string; date: Date }> = [];
+  let start = roundToNearestMinutes(
+    setMinutes(
+      setSeconds(setHours(datas.date, datas.startHour.hour), 0),
+      datas.startHour.minutes
+    ),
+    { nearestTo: 1 }
   );
-  let end = setMinutes(
-    setHours(dateNow, datas.endHour.hour),
-    datas.endHour.minutes
+  let end = roundToNearestMinutes(
+    setMinutes(
+      setSeconds(setHours(datas.date, datas.endHour.hour), 0),
+      datas.endHour.minutes
+    ),
+    { nearestTo: 1 }
   );
 
-  for (let hour = start; isAfter(end, hour); hour = addMinutes(hour, 30)) {
-    hours.push(formatDateHour(hour));
+  for (let hour = start; isAfter(end, hour); hour = addMinutes(hour, 60)) {
+    hours.push({ hour: formatDateHour(hour), date: hour });
   }
-  hours.push(formatDateHour(end));
+  hours.push({ hour: formatDateHour(end), date: end });
   return hours;
 };

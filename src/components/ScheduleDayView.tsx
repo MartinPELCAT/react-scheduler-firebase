@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import TablesHoursColumn from "./TablesHoursColumn";
-import TableDayRows from "./TableDayRows";
+import TableDayColumn from "./TableDayRows";
 import { getTodayDate } from "../services/DateService";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -42,7 +42,7 @@ export default class ScheduleDayView extends Component<RouteComponentProps> {
             </TableCell>
             <TableCell style={{ padding: 0 }}>
               <div>
-                <TableDayRows />
+                <TableDayColumn date={getTodayDate()} />
               </div>
             </TableCell>
           </TableRow>

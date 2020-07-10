@@ -3,6 +3,7 @@ import { Route, Switch, Redirect } from "react-router";
 import ScheduleDayView from "./ScheduleDayView";
 import ScheduleWeekView from "./ScheduleWeekView";
 import { Box } from "@material-ui/core";
+import "../assets/css/schedule.css";
 
 export default class Schedule extends Component {
   render() {

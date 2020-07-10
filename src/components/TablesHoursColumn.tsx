@@ -14,9 +14,10 @@ export default class TablesHoursColumn extends Component {
       <Table>
         <TableBody>
           {getDayHours({
+            date: new Date(),
             startHour: { hour: 6, minutes: 0 },
             endHour: { hour: 20, minutes: 0 },
-          }).map((hour) => {
+          }).map(({ hour }) => {
             return (
               <Fragment key={hour}>
                 <TableRow style={{ height: 36 }}>

@@ -14,6 +14,7 @@ export default class AppBar extends Component {
     super(props);
     this.handleLogOut = this.handleLogOut.bind(this);
   }
+
   handleLogOut() {
     auth()
       .signOut()
@@ -21,19 +22,22 @@ export default class AppBar extends Component {
         console.error(err);
       });
   }
+
   render() {
     return (
       <>
         <Bar>
           <Toolbar>
-            <Typography
-              to="/"
-              variant="h5"
-              style={{ flexGrow: 1, color: "#fff" }}
-              component={Link}
-            >
-              Schedule
-            </Typography>
+            <div style={{ flexGrow: 1 }}>
+              <Typography
+                to="/"
+                variant="h5"
+                style={{ color: "#fff" }}
+                component={Link}
+              >
+                Schedule
+              </Typography>
+            </div>
             <IconButton aria-label="Disconnect" onClick={this.handleLogOut}>
               <PowerSettingsNew style={{ color: "#fff" }} />
             </IconButton>

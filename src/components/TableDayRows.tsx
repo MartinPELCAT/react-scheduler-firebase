@@ -1,20 +1,35 @@
 import React, { Component, Fragment } from "react";
 import { Table, TableBody, TableRow, TableCell } from "@material-ui/core";
 import { getDayHours } from "../services/DateService";
+import { addMinutes } from "date-fns";
 
-export default class TableDayRows extends Component {
+interface Props {
+  date: Date;
+}
+
+export default class TableDayColumn extends Component<Props> {
+  handleRowClick = (
+    e: React.MouseEvent<HTMLTableHeaderCellElement, MouseEvent>
+  ) => {
+    console.log(e.currentTarget.dataset.timestamp);
+  };
+
   render() {
     return (
       <Table>
         <TableBody>
           {getDayHours({
+            date: this.props.date,
             startHour: { hour: 6, minutes: 0 },
             endHour: { hour: 20, minutes: 0 },
-          }).map((hour) => {
+          }).map(({ date }) => {
             return (
-              <Fragment key={hour}>
-                <TableRow style={{ height: 36 }}>
+              <Fragment key={date.getTime()}>
+                <TableRow style={{ height: 36, padding: 0 }}>
                   <TableCell
+                    className="clickable-row-schedule"
+                    onClick={this.handleRowClick}
+                    data-timestamp={date.getTime()}
                     style={{
                       padding: 0,
                       paddingLeft: 16,
@@ -23,8 +38,11 @@ export default class TableDayRows extends Component {
                     }}
                   ></TableCell>
                 </TableRow>
-                <TableRow style={{ height: 36 }}>
+                <TableRow style={{ height: 36, padding: 0 }}>
                   <TableCell
+                    className="clickable-row-schedule"
+                    onClick={this.handleRowClick}
+                    data-timestamp={addMinutes(date, 30).getTime()}
                     style={{
                       borderRight: "1px solid rgba(224, 224, 224, 1)",
                     }}
