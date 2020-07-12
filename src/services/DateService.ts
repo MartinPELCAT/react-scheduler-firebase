@@ -12,6 +12,8 @@ import {
   isAfter,
   roundToNearestMinutes,
   setSeconds,
+  format,
+  parse,
 } from "date-fns";
 
 /**
@@ -26,6 +28,47 @@ const weekOption: {
   locale?: Locale;
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 } = { weekStartsOn: 1 };
+
+const rangeHours = {
+  start: { hour: 0, minutes: 0 },
+  end: { hour: 23, minutes: 0 },
+};
+
+export const DATEFORMAT = "dd/MM/yyyy";
+
+const minutesSteps: number = 30;
+
+export const getDayTimestampsForRange = (
+  day: Date,
+  range = rangeHours,
+  step = minutesSteps
+): Array<number> => {
+  let dayStart = roundToNearestMinutes(
+    setHours(
+      setMinutes(setSeconds(day, 0), range.start.minutes),
+      range.start.hour
+    ),
+    { nearestTo: 1 }
+  );
+
+  let dayEnd = roundToNearestMinutes(
+    setHours(setMinutes(setSeconds(day, 0), range.end.minutes), range.end.hour),
+    { nearestTo: 1 }
+  );
+
+  let timestamps: Array<number> = [];
+  for (
+    let hour = dayStart;
+    isAfter(dayEnd, hour);
+    hour = addMinutes(hour, step)
+  ) {
+    timestamps.push(hour.getTime());
+  }
+  timestamps.push(dayEnd.getTime());
+  timestamps.push(addMinutes(dayEnd, step).getTime());
+
+  return timestamps;
+};
 
 /**
  * @description get today date
@@ -89,34 +132,6 @@ export const getCurrentFullMonthDays = (): Array<Date> => {
   return getFullMonthDays(new Date());
 };
 
-type HourType =
-  | 0
-  | 1
-  | 2
-  | 3
-  | 4
-  | 5
-  | 6
-  | 7
-  | 8
-  | 9
-  | 10
-  | 11
-  | 12
-  | 13
-  | 14
-  | 15
-  | 16
-  | 17
-  | 18
-  | 19
-  | 20
-  | 21
-  | 22
-  | 23;
-
-type MinuteType = 0 | 30;
-
 const formatNumber = (number: number): string => {
   return `0${number}`.slice(-2);
 };
@@ -129,23 +144,22 @@ const formatDateHour = (date: Date): string => {
   return formatHour(date.getHours(), date.getMinutes());
 };
 
-export const getDayHours = (datas: {
-  date: Date;
-  startHour: { hour: HourType; minutes: MinuteType };
-  endHour: { hour: HourType; minutes: MinuteType };
-}): Array<{ hour: string; date: Date }> => {
+export const getDayHours = (
+  date: Date,
+  range = rangeHours
+): Array<{ hour: string; date: Date }> => {
   let hours: Array<{ hour: string; date: Date }> = [];
   let start = roundToNearestMinutes(
     setMinutes(
-      setSeconds(setHours(datas.date, datas.startHour.hour), 0),
-      datas.startHour.minutes
+      setSeconds(setHours(date, range.start.hour), 0),
+      range.start.minutes
     ),
     { nearestTo: 1 }
   );
   let end = roundToNearestMinutes(
     setMinutes(
-      setSeconds(setHours(datas.date, datas.endHour.hour), 0),
-      datas.endHour.minutes
+      setSeconds(setHours(date, range.end.hour), 0),
+      range.end.minutes
     ),
     { nearestTo: 1 }
   );
@@ -155,4 +169,15 @@ export const getDayHours = (datas: {
   }
   hours.push({ hour: formatDateHour(end), date: end });
   return hours;
+};
+
+export const formatDate = (date: Date): string => {
+  return format(date, DATEFORMAT);
+};
+
+export const getDateFromString = (date: string | null): Date | null => {
+  if (!!!date) {
+    return null;
+  }
+  return parse(date, DATEFORMAT, new Date());
 };

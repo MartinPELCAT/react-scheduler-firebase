@@ -13,11 +13,17 @@ export default class TablesHoursColumn extends Component {
     return (
       <Table>
         <TableBody>
-          {getDayHours({
-            date: new Date(),
-            startHour: { hour: 6, minutes: 0 },
-            endHour: { hour: 20, minutes: 0 },
-          }).map(({ hour }) => {
+          <TableRow style={{ height: 50 }}>
+            <TableCell
+              style={{
+                padding: 0,
+                paddingLeft: 16,
+                paddingRight: 16,
+                borderRight: "1px solid rgba(224, 224, 224, 1)",
+              }}
+            ></TableCell>
+          </TableRow>
+          {getDayHours(new Date()).map(({ hour }) => {
             return (
               <Fragment key={hour}>
                 <TableRow style={{ height: 36 }}>
@@ -30,7 +36,7 @@ export default class TablesHoursColumn extends Component {
                       borderRight: "1px solid rgba(224, 224, 224, 1)",
                     }}
                   >
-                    <Typography variant="body2" display="block" align="center">
+                    <Typography variant="body1" display="block" align="center">
                       {hour}
                     </Typography>
                   </TableCell>

@@ -1,49 +1,28 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router";
-import {
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-} from "@material-ui/core";
+import { Table, TableBody, TableRow, TableCell } from "@material-ui/core";
 import TablesHoursColumn from "./TablesHoursColumn";
-import TableDayColumn from "./TableDayRows";
-import { getTodayDate } from "../services/DateService";
-import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import TableDayColumn from "./TableDayColumn";
 
-export default class ScheduleDayView extends Component<RouteComponentProps> {
+interface Props {
+  date: Date;
+}
+
+export default class ScheduleDayView extends Component<
+  RouteComponentProps & Props
+> {
   render() {
     return (
       <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell
-              style={{
-                width: 85,
-                borderRight: "1px solid rgba(224, 224, 224, 1)",
-              }}
-            />
-            <TableCell>
-              <Typography style={{ color: "#e3165b" }}>
-                {format(getTodayDate(), "eeee dd MMMM", { locale: fr })}
-              </Typography>
-            </TableCell>
-          </TableRow>
-        </TableHead>
         <TableBody>
           <TableRow>
-            <TableCell style={{ width: 100, padding: 0 }}>
-              <div>
-                <TablesHoursColumn />
-              </div>
+            <TableCell width={100} style={{ padding: 0, minWidth: "100px" }}>
+              {/* Hours column */}
+              <TablesHoursColumn />
             </TableCell>
-            <TableCell style={{ padding: 0 }}>
-              <div>
-                <TableDayColumn date={getTodayDate()} />
-              </div>
+            <TableCell style={{ padding: 0, minWidth: "200px" }}>
+              {/*Days map on date props */}
+              <TableDayColumn date={this.props.date} />
             </TableCell>
           </TableRow>
         </TableBody>

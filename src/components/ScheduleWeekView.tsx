@@ -1,83 +1,32 @@
 import React, { Component } from "react";
 import { RouteComponentProps } from "react-router";
-import {
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  Typography,
-  TableBody,
-} from "@material-ui/core";
-import { format } from "date-fns";
-import { getCurrentWeekDays } from "../services/DateService";
-import { fr } from "date-fns/locale";
+import { Table, TableRow, TableCell, TableBody } from "@material-ui/core";
 import TablesHoursColumn from "./TablesHoursColumn";
-import TableDayColumn from "./TableDayRows";
+import TableDayColumn from "./TableDayColumn";
 
-export default class ScheduleWeekView extends Component<RouteComponentProps> {
+interface Props {
+  dates: Date[];
+}
+export default class ScheduleWeekView extends Component<
+  RouteComponentProps & Props
+> {
   render() {
     return (
       <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell
-              style={
-                {
-                  // width: 85,
-                }
-              }
-            />
-            <TableCell style={{ padding: 0 }}>
-              <div>
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      {getCurrentWeekDays().map((day) => (
-                        <TableCell
-                          key={day.getTime()}
-                          style={{
-                            padding: 0,
-                            borderBottom: "none",
-                            width: "calc(100% / 7)",
-                          }}
-                        >
-                          <Typography
-                            align="center"
-                            style={{ color: "#e3165b" }}
-                          >
-                            {format(day, "eeee dd MMMM", { locale: fr })}
-                          </Typography>
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-            </TableCell>
-          </TableRow>
-        </TableHead>
         <TableBody>
           <TableRow>
-            <TableCell style={{ width: 100, padding: 0 }}>
-              <div>
-                <TablesHoursColumn />
-              </div>
+            <TableCell width={100} style={{ padding: 0, minWidth: "100px" }}>
+              {/* Hours column */}
+              <TablesHoursColumn />
             </TableCell>
-            <TableCell style={{ padding: 0 }}>
-              <div>
-                <Table>
-                  <TableBody>
-                    <TableRow>
-                      {getCurrentWeekDays().map((day) => (
-                        <TableCell key={day.getTime()} style={{ padding: 0 }}>
-                          <TableDayColumn date={day} />
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </div>
-            </TableCell>
+            {this.props.dates.map((date) => (
+              <TableCell
+                key={date.getTime()}
+                style={{ padding: 0, minWidth: "200px" }}
+              >
+                <TableDayColumn date={date} />
+              </TableCell>
+            ))}
           </TableRow>
         </TableBody>
       </Table>
