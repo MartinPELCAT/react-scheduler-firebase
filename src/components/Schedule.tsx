@@ -10,10 +10,12 @@ import {
   getDateFromString,
   getWeekDaysOfDate,
   DATEFORMAT,
+  formatDate,
 } from "../services/DateService";
 import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
+import { addDays, subDays, isValid } from "date-fns";
 
 interface States {
   date: Date;
@@ -26,6 +28,8 @@ export default class Schedule extends Component<RouteComponentProps, States> {
       date: getTodayDate(),
       pickerOpened: false,
     };
+    this.getNextDate = this.getNextDate.bind(this);
+    this.getPrevDate = this.getPrevDate.bind(this);
   }
   componentDidMount() {
     this.getDateFromUrl();
@@ -41,19 +45,52 @@ export default class Schedule extends Component<RouteComponentProps, States> {
   }
 
   getDateFromUrl() {
-    this.setState({
-      date:
+    if (
+      !!!isValid(
         getDateFromString(
-          new URLSearchParams(this.props.location.search)?.get("date") || null
-        ) || this.state.date,
-    });
+          new URLSearchParams(this.props.location.search)?.get("date")
+        )
+      )
+    ) {
+      this.setState({ date: new Date() });
+      this.props.history.push(this.props.location.pathname);
+    } else {
+      this.setState({
+        date:
+          getDateFromString(
+            new URLSearchParams(this.props.location.search)?.get("date") || null
+          ) || this.state.date,
+      });
+    }
   }
+
+  getNextDate = () => {
+    this.props.history.push(
+      `${this.props.location.pathname}?date=${formatDate(
+        addDays(
+          this.state.date,
+          this.props.location.pathname === "/day" ? 1 : 7
+        )
+      )}`
+    );
+  };
+
+  getPrevDate = () => {
+    this.props.history.push(
+      `${this.props.location.pathname}?date=${formatDate(
+        subDays(
+          this.state.date,
+          this.props.location.pathname === "/day" ? 1 : 7
+        )
+      )}`
+    );
+  };
 
   render() {
     return (
       <Box padding={0}>
         <Grid container component={Paper}>
-          <IconButton size="small">
+          <IconButton size="small" onClick={this.getPrevDate}>
             <ArrowLeft />
           </IconButton>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -65,15 +102,17 @@ export default class Schedule extends Component<RouteComponentProps, States> {
               open={this.state.pickerOpened}
               onOpen={() => this.setState({ pickerOpened: true })}
               onClose={() => this.setState({ pickerOpened: false })}
-              onChange={(date) =>
+              onChange={(date) => {
+                this.props.history.push(
+                  `${this.props.location.pathname}?date=${formatDate(date!)}`
+                );
                 this.setState({
-                  date: date || this.state.date,
                   pickerOpened: false,
-                })
-              }
+                });
+              }}
             />
           </MuiPickersUtilsProvider>
-          <IconButton size="small">
+          <IconButton size="small" onClick={this.getNextDate}>
             <ArrowRight />
           </IconButton>
           <Box padding={1}>
