@@ -29,14 +29,37 @@ const weekOption: {
   weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
 } = { weekStartsOn: 1 };
 
-const rangeHours = {
+export const rangeHours = {
   start: { hour: 0, minutes: 0 },
   end: { hour: 23, minutes: 0 },
 };
 
-export const DATEFORMAT = "dd/MM/yyyy";
+export const DATEFORMAT = "dd-MM-yyyy";
 
 const minutesSteps: number = 30;
+
+export const getFirstTimestampForDay = (timestamp: number): number => {
+  return roundToNearestMinutes(
+    setHours(
+      setMinutes(setSeconds(timestamp, 0), rangeHours.start.minutes),
+      rangeHours.start.hour
+    ),
+    { nearestTo: 1 }
+  ).getTime();
+};
+
+export const getLastTimeStamForDay = (timestamp: number): number => {
+  return addMinutes(
+    roundToNearestMinutes(
+      setHours(
+        setMinutes(setSeconds(timestamp, 0), rangeHours.end.minutes),
+        rangeHours.end.hour
+      ),
+      { nearestTo: 1 }
+    ),
+    30
+  ).getTime();
+};
 
 export const getDayTimestampsForRange = (
   day: Date,
