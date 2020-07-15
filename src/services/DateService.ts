@@ -48,7 +48,7 @@ export const getFirstTimestampForDay = (timestamp: number): number => {
   ).getTime();
 };
 
-export const getLastTimeStamForDay = (timestamp: number): number => {
+export const getLastTimestampForDay = (timestamp: number): number => {
   return addMinutes(
     roundToNearestMinutes(
       setHours(

@@ -1,16 +1,40 @@
 import React, { Component, createContext } from "react";
 import { ScheduleEvent } from "../services/ScheduleEvent";
 
-interface IEventContext {
+export interface IEventContext {
   addScheduleEvent?(): void;
   removeScheduleEvent?(): void;
   scheduleEvents?: Array<ScheduleEvent>;
+  setScheduleEvents?(events: Array<ScheduleEvent>): void;
 }
 
 export const ContextEvent = createContext<IEventContext>({});
 
-export default class EventContext extends Component {
+interface States {
+  scheduleEvents: Array<ScheduleEvent>;
+}
+export default class EventContext extends Component<{}, States> {
+  constructor(props: Readonly<{}>) {
+    super(props);
+    this.state = {
+      scheduleEvents: [],
+    };
+  }
+
+  handleSetScheduleEvents = (scheduleEvents: Array<ScheduleEvent>) => {
+    this.setState({ scheduleEvents });
+  };
+
   render() {
-    return <div></div>;
+    return (
+      <ContextEvent.Provider
+        value={{
+          scheduleEvents: this.state.scheduleEvents,
+          setScheduleEvents: this.handleSetScheduleEvents,
+        }}
+      >
+        {this.props.children}
+      </ContextEvent.Provider>
+    );
   }
 }

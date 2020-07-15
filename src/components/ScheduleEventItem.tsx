@@ -3,7 +3,7 @@ import { Box } from "@material-ui/core";
 import { ScheduleEvent } from "../services/ScheduleEvent";
 import {
   getFirstTimestampForDay,
-  getLastTimeStamForDay,
+  getLastTimestampForDay,
 } from "../services/DateService";
 import { rowHeight } from "../assets/themes/cssConst";
 
@@ -17,15 +17,17 @@ export default class ScheduleEventItem extends Component<Props> {
   constructor(props: Readonly<Props>) {
     super(props);
     let firstPosition = this.getTimestampPosition(
-      this.props.scheduleEvent.startTimestamp
+      this.props.scheduleEvent.startTimestamp.toDate().getTime()
     );
     let lastPosition = this.getTimestampPosition(
-      this.props.scheduleEvent.endTimestamps
+      this.props.scheduleEvent.endTimestamps.toDate().getTime()
     );
     if (lastPosition <= firstPosition) {
       lastPosition =
         this.getTimestampPosition(
-          getLastTimeStamForDay(this.props.scheduleEvent.startTimestamp)
+          getLastTimestampForDay(
+            this.props.scheduleEvent.startTimestamp.toDate().getTime()
+          )
         ) + rowHeight;
     }
     this.topPosition = firstPosition;

@@ -16,6 +16,7 @@ import { ArrowLeft, ArrowRight } from "@material-ui/icons";
 import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import { addDays, subDays, isValid } from "date-fns";
+import EventContext from "../contexts/EventContext";
 
 interface States {
   date: Date;
@@ -123,20 +124,22 @@ export default class Schedule extends Component<RouteComponentProps, States> {
           </Box>
         </Grid>
         <Grid container>
-          <Switch>
-            <Route path="/day">
-              <ScheduleDayView {...this.props} date={this.state.date} />
-            </Route>
-            <Route path="/week">
-              <ScheduleWeekView
-                {...this.props}
-                dates={getWeekDaysOfDate(this.state.date)}
-              />
-            </Route>
-            <Route>
-              <Redirect to="/day" />
-            </Route>
-          </Switch>
+          <EventContext>
+            <Switch>
+              <Route path="/day">
+                <ScheduleDayView {...this.props} date={this.state.date} />
+              </Route>
+              <Route path="/week">
+                <ScheduleWeekView
+                  {...this.props}
+                  dates={getWeekDaysOfDate(this.state.date)}
+                />
+              </Route>
+              <Route>
+                <Redirect to="/day" />
+              </Route>
+            </Switch>
+          </EventContext>
         </Grid>
       </Box>
     );

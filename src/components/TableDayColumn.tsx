@@ -6,11 +6,12 @@ import {
   TableCell,
   Typography,
 } from "@material-ui/core";
-import { format, isToday, addMinutes } from "date-fns";
+import { format, isToday, isSameDay } from "date-fns";
 import { fr } from "date-fns/locale";
 import { getDayTimestampsForRange } from "../services/DateService";
 import ScheduleEventItem from "./ScheduleEventItem";
 import { headerHeight, rowHeight } from "../assets/themes/cssConst";
+import { ContextEvent } from "../contexts/EventContext";
 
 interface Props {
   date: Date;
@@ -66,15 +67,19 @@ export default class TableDayColumn extends Component<Props> {
           </TableBody>
         </Table>
         {/* display events with position absolute */}
-        <ScheduleEventItem
-          scheduleEvent={{
-            startTimestamp: new Date().getTime(),
-            title: "Test title",
-            reccurent: false,
-            color: "violet",
-            endTimestamps: addMinutes(new Date(), 300).getTime(),
+        <ContextEvent.Consumer>
+          {({ scheduleEvents }) => {
+            return scheduleEvents
+              ?.filter(
+                (event) =>
+                  isSameDay(this.props.date, event.startTimestamp.toDate()) ||
+                  isSameDay(this.props.date, event.endTimestamps.toDate())
+              )
+              .map((event) => (
+                <ScheduleEventItem key={event.id} scheduleEvent={event} />
+              ));
           }}
-        />
+        </ContextEvent.Consumer>
       </div>
     );
   }
