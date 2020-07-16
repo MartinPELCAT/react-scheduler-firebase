@@ -34,7 +34,9 @@ export const rangeHours = {
   end: { hour: 23, minutes: 0 },
 };
 
-export const DATEFORMAT = "dd-MM-yyyy";
+export const DATEFORMAT = "dd/MM/yyyy";
+
+export const HOURFORMAT = "HH:mm";
 
 const minutesSteps: number = 30;
 

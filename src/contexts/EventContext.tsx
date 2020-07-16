@@ -22,9 +22,21 @@ export default class EventContext extends Component<{}, States> {
   }
 
   handleSetScheduleEvents = (scheduleEvents: Array<ScheduleEvent>) => {
-    this.setState({ scheduleEvents });
+    this.setState({
+      scheduleEvents: this.getDistinctScheduleEvents(scheduleEvents),
+    });
   };
 
+  getDistinctScheduleEvents = (
+    scheduleEvents: Array<ScheduleEvent>
+  ): Array<ScheduleEvent> => {
+    return this.state.scheduleEvents.concat(
+      scheduleEvents.filter(
+        (item) =>
+          this.state.scheduleEvents.findIndex((ev) => ev.id === item.id) < 0
+      )
+    );
+  };
   render() {
     return (
       <ContextEvent.Provider

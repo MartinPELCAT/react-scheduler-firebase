@@ -13,8 +13,7 @@ import {
   formatDate,
 } from "../services/DateService";
 import { ArrowLeft, ArrowRight } from "@material-ui/icons";
-import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import { DatePicker } from "@material-ui/pickers";
 import { addDays, subDays, isValid } from "date-fns";
 import EventContext from "../contexts/EventContext";
 
@@ -33,7 +32,9 @@ export default class Schedule extends Component<RouteComponentProps, States> {
     this.getPrevDate = this.getPrevDate.bind(this);
   }
   componentDidMount() {
-    this.getDateFromUrl();
+    if (this.props.location.pathname !== "/") {
+      this.getDateFromUrl();
+    }
   }
 
   componentDidUpdate(prevProps: Readonly<RouteComponentProps>) {
@@ -94,25 +95,23 @@ export default class Schedule extends Component<RouteComponentProps, States> {
           <IconButton size="small" onClick={this.getPrevDate}>
             <ArrowLeft />
           </IconButton>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <DatePicker
-              disableToolbar
-              variant="inline"
-              format={DATEFORMAT}
-              value={this.state.date}
-              open={this.state.pickerOpened}
-              onOpen={() => this.setState({ pickerOpened: true })}
-              onClose={() => this.setState({ pickerOpened: false })}
-              onChange={(date) => {
-                this.props.history.push(
-                  `${this.props.location.pathname}?date=${formatDate(date!)}`
-                );
-                this.setState({
-                  pickerOpened: false,
-                });
-              }}
-            />
-          </MuiPickersUtilsProvider>
+          <DatePicker
+            disableToolbar
+            variant="inline"
+            format={DATEFORMAT}
+            value={this.state.date}
+            open={this.state.pickerOpened}
+            onOpen={() => this.setState({ pickerOpened: true })}
+            onClose={() => this.setState({ pickerOpened: false })}
+            onChange={(date) => {
+              this.props.history.push(
+                `${this.props.location.pathname}?date=${formatDate(date!)}`
+              );
+              this.setState({
+                pickerOpened: false,
+              });
+            }}
+          />
           <IconButton size="small" onClick={this.getNextDate}>
             <ArrowRight />
           </IconButton>

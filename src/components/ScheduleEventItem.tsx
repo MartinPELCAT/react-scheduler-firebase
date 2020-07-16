@@ -45,9 +45,7 @@ export default class ScheduleEventItem extends Component<Props> {
       <Box
         style={{
           backgroundColor: this.props.scheduleEvent.color,
-          width: "94%",
-          marginLeft: "3%",
-          marginRight: "3%",
+          width: "100%",
         }}
         position="absolute"
         top={this.topPosition}
