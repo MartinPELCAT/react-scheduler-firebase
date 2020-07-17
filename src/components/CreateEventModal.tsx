@@ -8,26 +8,27 @@ import {
   TextField,
   DialogActions,
   Button,
-  Input,
 } from "@material-ui/core";
 import { DateTimePicker } from "@material-ui/pickers";
 import { getTodayDate, DATEFORMAT, HOURFORMAT } from "../services/DateService";
 import { addMinutes } from "date-fns/esm";
 import { Formik, FormikHelpers } from "formik";
 import { eventForm } from "../forms/eventForm";
+import { COLORS } from "../assets/themes/materials-colors";
+import { firestore } from "firebase";
+import { addEvent, ScheduleEvent } from "../services/ScheduleEvent";
+import { ContextEvent, IEventContext } from "../contexts/EventContext";
 
 interface Props {
   startTimestamp: number;
 }
 
 export default class CreateEventModal extends Component<Props & DialogProps> {
+  static contextType = ContextEvent;
   constructor(props: any) {
     super(props);
-    this.validateForm = this.validateForm.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
-  validateForm = (values: any) => {};
 
   handleSubmit = (
     values: {
@@ -47,14 +48,25 @@ export default class CreateEventModal extends Component<Props & DialogProps> {
       color: string;
     }>
   ) => {
-    // event.preventDefault();
-    // this.validateForm()
-    //   .then(() => {
-    //     //TODO: Add to firebase
-    //   })
-    //   .catch(() => {
-    //     //TODO: Thow error
-    //   });
+    let { title, startDate, endDate, description, reccurent, color } = values;
+    let scheduleEvent: ScheduleEvent = {
+      title,
+      startTimestamp: firestore.Timestamp.fromDate(new Date(startDate)),
+      endTimestamps: firestore.Timestamp.fromDate(new Date(endDate)),
+      description,
+      reccurent,
+      color,
+    };
+    addEvent(scheduleEvent)
+      .then((ev) => {
+        (this.context as IEventContext).setScheduleEvents!([
+          { ...scheduleEvent, id: ev.id },
+        ]);
+        this.props.onClose && this.props.onClose({}, "escapeKeyDown");
+      })
+      .catch((e) => {
+        formikHelpers.setStatus({ apiCall: e.message });
+      });
   };
 
   render() {
@@ -71,11 +83,10 @@ export default class CreateEventModal extends Component<Props & DialogProps> {
             title: "",
             description: "",
             reccurent: false,
-            color: "#fff",
+            color: COLORS[Math.floor(Math.random() * COLORS.length) + 1],
           }}
           initialStatus={{ apiCall: "" }}
           onSubmit={this.handleSubmit}
-          validate={this.validateForm}
         >
           {({
             values,
@@ -93,6 +104,7 @@ export default class CreateEventModal extends Component<Props & DialogProps> {
                     <Grid item md={12}>
                       <TextField
                         fullWidth
+                        required
                         label="Title"
                         value={values.title}
                         onChange={handleChange}
@@ -154,16 +166,34 @@ export default class CreateEventModal extends Component<Props & DialogProps> {
                         helperText={errors.description}
                       />
                     </Grid>
-                    <Grid item>
-                      <Input type="color" fullWidth />
+                    <Grid item md={12}>
+                      <input
+                        type="color"
+                        value={values.color}
+                        onChange={(t) =>
+                          setFieldValue("color", t.currentTarget.value)
+                        }
+                      />
                     </Grid>
                   </Grid>
                 </DialogContent>
                 <DialogActions>
-                  <Button variant="contained" color="secondary" type="button">
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: "#bdbdbd" }}
+                    type="button"
+                    onClick={() =>
+                      this.props.onClose &&
+                      this.props.onClose({}, "escapeKeyDown")
+                    }
+                  >
                     Cancel
                   </Button>
-                  <Button variant="contained" color="primary" type="submit">
+                  <Button
+                    variant="contained"
+                    style={{ backgroundColor: "#00C851" }}
+                    type="submit"
+                  >
                     Save
                   </Button>
                 </DialogActions>

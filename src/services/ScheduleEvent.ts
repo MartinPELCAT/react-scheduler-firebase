@@ -61,3 +61,7 @@ export const getDaysEvents = (
     });
   });
 };
+
+export const addEvent = (event: ScheduleEvent) => {
+  return firestore().collection(models.Events).add(event);
+};

@@ -90,7 +90,11 @@ export default class TableDayColumn extends Component<Props, States> {
                     isSameDay(this.props.date, event.endTimestamps.toDate())
                 )
                 .map((event) => (
-                  <ScheduleEventItem key={event.id} scheduleEvent={event} />
+                  <ScheduleEventItem
+                    key={event.id}
+                    scheduleEvent={event}
+                    date={this.props.date}
+                  />
                 ));
             }}
           </ContextEvent.Consumer>
@@ -99,9 +103,8 @@ export default class TableDayColumn extends Component<Props, States> {
           <CreateEventModal
             startTimestamp={this.state.startTimestamp}
             open={!!this.state.startTimestamp}
-            onClose={(e, r) => {
-              if (r !== "backdropClick")
-                this.setState({ startTimestamp: null });
+            onClose={() => {
+              this.setState({ startTimestamp: null });
             }}
           />
         )}
